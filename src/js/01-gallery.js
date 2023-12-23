@@ -9,7 +9,8 @@ const galleryLocation = document.querySelector('.gallery');
  * @param {*} gallery - The object of images that make up the gallery.
  * @param {*} HTMLLocation - Where the gallery will be located on the page.
  */
-function makeGallery( gallery, HTMLLocation) {
+
+function makeGallery( gallery, HTMLLocation ) {
   let markup = (smallImg, largeImg, altText) => `<li class="gallery__item">
     <a class="gallery__link" href="${largeImg}">
       <img
@@ -40,7 +41,24 @@ function handlerClick(evt) {
 
   const instance = basicLightbox.create(`
     <img src="${evt.target.dataset.source}" width="800" height="600">
-  `)
+    `,
+    {
+      handler: null,
+      onShow(instance) {
+        console.log(this);
+        this.handler = onEscape.bind(instance);
+        document.addEventListener("keydown", this.handler);
+      },
+      onClose() {
+        document.removeEventListener("keydown", this.handler);
+      },
+    })
   
   instance.show()
+}
+
+function onEscape({ code }) {
+  if (code === "Escape") {
+    this.close();
+  }
 }
